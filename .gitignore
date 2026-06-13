@@ -21,6 +21,9 @@
 stage2-response.js
 *.malware.js
 
+# Screenshot contains the full obfuscated stage-two source
+screenshots/2026-06-13_02-21-13.png
+
 # Local incident artifacts
 metaplay-vercel-process-env-*.json
 secret-scrub-*/

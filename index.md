@@ -34,7 +34,7 @@ The victim did run root `npm i` during the live interview, triggering the malici
 - [IOCs](./IOCs.md)
 - [Reconstructed nohup runtime evidence](./NOHUP_RUNTIME_EVIDENCE.md)
 - [Artifact handling notes](./ARTIFACTS.md)
-- [Supporting screenshots](./screenshots/)
+- [Supporting screenshots](./screenshots/index.md)
 
 ## Safe Publication Checklist
 
@@ -59,6 +59,7 @@ The server imported `socket/index.js`. During module initialization, that file d
 **Practical conclusion:** this was a malicious software-supply-chain and social-engineering attack using npm lifecycle execution, environment-variable exfiltration, staged remote JavaScript, and remote command execution. Completed revocations, logouts, process cleanup, and network containment materially reduced the identified credential and callback risk; Claude removal/revocation remains pending unless separately confirmed. This conclusion is qualified as follows:
 
 - **Confirmed by static evidence:** the malicious lifecycle trigger, import chain, complete environment POST, downloaded-code execution, captured second-stage behavior, C2 address, polling interval, remote-eval capability, and VS Code folder-open trigger.
+- **Corroborated by screenshots and Git history:** the public repository displayed the malicious `prepare` command and instructed candidates to run the root install before a second client install. Branded recruiting collateral presented MetaPlay as a Ritual product centered on crypto rewards, NFTs, tokens, staking, and cross-chain gaming.
 - **Likely:** the original Vercel POST succeeded because the later runtime error occurred inside the fetched stage-two path. The original Vercel request body is not independently preserved.
 - **Not proven:** successful delivery of host information to the direct-IP C2; delivery of any follow-on remote-eval command; reading or exfiltration of SSH keys, GPG keys, browser data, wallet files, npm credentials, cloud credentials, or local CLI authentication files.
 
@@ -142,6 +143,11 @@ flowchart LR
 | `MetaPlay/.env` | `AUTH_API` plus API/cloud-themed variables | Supplies an alternate Vercel endpoint and bait/demo values that normalize secret-looking configuration | Social camouflage and expanded env payload | Confirmed; values intentionally omitted |
 | `MetaPlay/.vscode/tasks.json:7-19` | Hidden background `npm install -s`; `runOn: folderOpen` | Can trigger npm installation merely by opening/trusting the folder in VS Code | Secondary social trigger/persistence-like reactivation | Confirmed |
 | `MetaPlay/.vscode/settings.json:4-8` | `files.exclude["**/.vscode"] = true` | Hides the folder containing the automatic task from the Explorer | Reduces discoverability | Confirmed |
+| Git commit `98f07f5` | Bland message `update Users field` introduced `prepare`, the complete environment POST, `new Function`, BNB Smart Chain configuration, and error suppression together | Conceals a coordinated malicious change inside a large, ordinary-looking application update | Repository-history camouflage | Confirmed from local Git history |
+| Git history through commit `7c0b71e` | Reused the full history of the unrelated `tcpie` project, then replaced its tree with a poker application | Made the repository appear old and active; the displayed 315-commit count was not genuine MetaPlay development history | Provenance laundering and false legitimacy | Confirmed; does not implicate inherited historical contributors |
+| `screenshots/2026-06-13_02-13-20.png` | Unknown-sender warning, `@ritualhub.net` invitation, Google Meet/Calendly workflow | Corroborates unsolicited recruiting contact and a polished scheduling wrapper | Social-engineering infrastructure | Confirmed screenshot; identity attribution remains unproven |
+| `screenshots/2026-06-13_02-14-05.png` through `02-14-38.png` | Ritual-branded company, MetaPlay, role, compensation, and benefits document | Supplies professional-looking collateral and crypto-native product claims | Brand impersonation and recruitment pretext | Confirmed screenshot content |
+| `screenshots/2026-06-13_02-16-25.png` through `02-18-11.png` | Public repository, apparent contributors/history, crypto README, exact install instructions, malicious `prepare` line | Corroborates the technical trigger and legitimacy signals visible to the victim | Execution pressure and repository camouflage | Confirmed screenshot content |
 | `metaplay-live-fetch/stage2-response.js` | Obfuscated `os`, `process.env`, `fetch`, timer, and `eval` logic | Profiles host, sends environment and host data to C2, polls, and executes commands | Surveillance and remote code execution | Confirmed |
 | `metaplay-live-fetch/headers.txt` | HTTP 200, Vercel, 3,686-byte response | Records successful analyst retrieval of stage two | Confirms endpoint behavior at capture time, not necessarily original delivery | Confirmed |
 | `metaplay-live-fetch/fetch-meta.txt` | `remote_ip=216.198.79.131` | Records the IP serving the Vercel response during analyst capture | Infrastructure IOC; CDN/serverless IP may be shared or change | Confirmed |
@@ -187,10 +193,15 @@ flowchart LR
 - **Clean exit:** proposing weekend review and a follow-up meeting ended the interaction without revealing that containment would begin immediately.
 - **Post-contact burn:** removal of the LinkedIn identity and Gmail invitation after the refusal is suspicious and consistent with social-infrastructure burn.
 - **Combined attack surface:** the malicious code depended on the interview narrative, identity presentation, and professional pressure to reach execution. The social infrastructure was therefore as operationally important as the npm and JavaScript components.
+- **Prepared collateral:** screenshots show an invitation workflow and a polished, branded Google document covering company background, product claims, open roles, compensation, and benefits. This reduced the chance that the repository request would appear isolated or improvised.
+- **High-value lure:** the role document advertised a broad set of technical and executive openings with high salary and contractor-rate ranges, plus possible exposure to pre-launch tokens. Those claims increased the economic appeal of continuing the process.
+- **Repository legitimacy cues:** the public GitHub page displayed a mature-looking commit count and multiple contributor avatars. Local Git history shows that the first 275 commits belonged to the unrelated `tcpie` project before a single large commit replaced the tree with the poker application. Visible age and contributor count were therefore unreliable trust signals.
+- **Maturity mismatch:** at screenshot time, the public repository showed 315 commits but minimal stars/forks, no description or topics, and no releases or packages. This mismatch is not proof of malice by itself, but it weakens the apparent maturity signal.
 
 ### Crypto-targeting context
 
 - **Crypto-native lure:** the repository presented itself as a Ritual-branded, multi-chain, play-to-earn gaming platform with crypto rewards, NFTs, smart contracts, staking, and token integration.
+- **Collateral alignment:** the recruiting document independently described MetaPlay as a key product and emphasized real cryptocurrency rewards, NFT avatars, token governance/trading/purchases, staking, and cross-chain support. The social pretext and codebase were deliberately aligned around crypto.
 - **Wallet interaction surface:** the client included `ethers`, a MetaMask connection helper, Ethereum chain-switch requests, wallet-address state, and wallet-address handling in the game socket flow.
 - **BNB Smart Chain references:** server configuration included a BNB Smart Chain RPC URL alongside contract, NFT-contract, and client-deposit addresses.
 - **Environment bait:** the repository `.env` used blockchain-provider and explorer variable names, increasing the chance that a crypto developer would normalize or expose related environment material.
@@ -226,6 +237,8 @@ These paths define the **reachable threat surface**, not confirmed collection. T
 - **VS Code social trap:** opening/trusting the folder could quietly run another npm install, while settings hid `.vscode` from the explorer.
 - **Bait/demo `.env`:** plausible blockchain and cloud variable names made a secret-bearing environment file seem normal and increased the perceived legitimacy of environment access.
 - **Clean social exit pressure:** the operator relied on the victim wanting to appear cooperative during an interview. The victim avoided tipping their hand by framing refusal as ordinary code-review policy rather than accusing the interviewer.
+- **Layered legitimacy:** branded scheduling, a detailed role document, an apparently established GitHub organization, a substantial working poker application, and a long inherited commit history made the malicious loader a small part of a much larger credible-looking package.
+- **History reuse:** retaining an unrelated project's decade-long commit history created an immediate appearance of repository maturity without requiring years of MetaPlay development.
 
 ## 7. What Was Amateur / Suspicious OPSEC
 
@@ -241,6 +254,9 @@ These paths define the **reachable threat surface**, not confirmed collection. T
 - **No captured file stealer:** the retrieved second stage does not enumerate credential files, browser stores, wallets, SSH keys, or GPG keys.
 - **Easy detection strings:** `new Function`, `eval`, `process.env`, `axios.post`, `nohup`, base64 endpoints, `runOn: folderOpen`, and the direct IP provide straightforward static and network IOCs.
 - **Disposable identity burn:** after the victim refused to continue and proposed reviewing the code later, the apparent interviewer deleted the LinkedIn account and Gmail invite. This is suspicious and consistent with infrastructure burn, though it is not proof by itself of who operated the attack.
+- **Inconsistent provenance:** the repository claimed Ritual ownership while retaining legacy `0gRollplay`, Netlify, and unrelated `tcpie` history. The abrupt tree replacement and generic recent commit messages make the manufactured provenance discoverable through basic Git review.
+- **Overloaded malicious commit:** commit `98f07f5` introduced the lifecycle trigger, environment exfiltration, downloaded-code execution, BNB Smart Chain values, and suppressed runtime errors under the unrelated message `update Users field`. The concentration of behavior makes historical triage straightforward.
+- **Cover-application inconsistencies:** the README and configuration described a conventional authenticated application, but the login path hardcoded password validation as successful and referenced JWT configuration names not exported by `config.js`. These defects reinforce that the application was credible-looking cover rather than a production-quality product.
 
 ## 8. Exposure Assessment
 
@@ -384,6 +400,8 @@ A reconstructed `nohup.out` excerpt is provided in [`NOHUP_RUNTIME_EVIDENCE.md`]
 
 - **Malicious repository:** Yes.
 - **Combined operation:** The technical payload was paired with a social-engineering wrapper involving an apparent interview, Ritual brand imitation, a reported `@ritualhub.net` identity, and the `Ritual-Products/` GitHub organization.
+- **Corroborating presentation evidence:** Screenshots preserve the unsolicited invitation, Ritual-branded recruiting document, crypto-focused MetaPlay description, exact root/client installation instructions, and malicious lifecycle line as they appeared in the public workflow.
+- **Repository provenance:** The apparent 315-commit history was inherited from the unrelated `tcpie` project before the tree was replaced with a poker application. This is consistent with repository-history laundering to create age and legitimacy; it does not independently attribute the attack or implicate inherited contributors.
 - **Intended purpose:** Environment/credential discovery and exfiltration, followed by staged remote command execution. The crypto-native lure and BNB Smart Chain, MetaMask, wallet, contract, and deposit-address surfaces are consistent with targeting crypto users and make crypto-asset theft a plausible broader objective.
 - **Wallet-theft boundary:** No preserved payload directly steals a seed phrase or private key, initiates a transfer, or requests a malicious signature. A completed wallet-drainer flow is not proven.
 - **Execution status:** The victim's root `npm i` during the live interview executed the malicious npm lifecycle chain. This was a real detonation event, not merely a theoretical finding from later analysis.
