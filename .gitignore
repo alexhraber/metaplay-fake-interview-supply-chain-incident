@@ -1,0 +1,34 @@
+# Never publish local secret or environment captures
+*.env
+.env
+*.pem
+*.key
+*.p12
+*.pfx
+*.kdbx
+*.sqlite
+*.sqlite3
+
+# Never publish raw credential/audit captures
+*secret*
+*credential*
+*token*
+*auth.json*
+*hosts.yml*
+*.npmrc
+
+# Never publish raw attacker payloads as executable JS
+stage2-response.js
+*.malware.js
+
+# Local incident artifacts
+metaplay-vercel-process-env-*.json
+secret-scrub-*/
+secret-scrub-followup-*/
+env-audit-*/
+compromised-secrets/
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/
