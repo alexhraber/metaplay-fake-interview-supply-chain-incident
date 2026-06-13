@@ -34,6 +34,7 @@ The victim did run root `npm i` during the live interview, triggering the malici
 - [IOCs](./IOCs.md)
 - [Reconstructed nohup runtime evidence](./NOHUP_RUNTIME_EVIDENCE.md)
 - [Artifact handling notes](./ARTIFACTS.md)
+- [Supporting screenshots](./screenshots/)
 
 ## Safe Publication Checklist
 
