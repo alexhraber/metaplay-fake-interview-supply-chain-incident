@@ -28,6 +28,13 @@ secret-scrub-followup-*/
 env-audit-*/
 compromised-secrets/
 
+# Build / local generated files
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+vendor/
+
 # OS/editor noise
 .DS_Store
 .idea/
