@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 # Reconstructed `nohup.out` Runtime Evidence
 
 This file reconstructs the runtime evidence observed from the detached `node server` process during the live MetaPlay incident.

@@ -1,6 +1,6 @@
 title: "MetaPlay Fake-Interview Supply-Chain Incident"
 description: "Defensive incident write-up: npm lifecycle execution, staged JavaScript, env exfiltration, C2 polling, and containment."
-theme: jekyll-theme-hacker
+markdown: kramdown
 show_downloads: false
 github:
   is_project_page: true

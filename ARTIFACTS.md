@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 # Artifact Publication Policy
 
 This is a defensive disclosure repository, not a malware-sample distribution repository.

@@ -17,7 +17,16 @@ The victim did run root `npm i` during the live interview, triggering the malici
 - **Stopped step:** `cd client && npm i` was not run
 - **First-stage exposure:** Process environment likely reached the Vercel loader
 - **Direct-IP C2:** Completion not proven; observed `ENETUNREACH`
+- **Targeting context:** Crypto-themed lure with MetaMask, wallet, contract, deposit-address, and BNB Smart Chain references
 - **Payload publication:** Raw executable payloads intentionally withheld
+
+<nav class="top-nav">
+  <a href="./">Article</a>
+  <a href="./INCIDENT_THREAT_SURFACE.html">Full Report</a>
+  <a href="./IOCs.html">IOCs</a>
+  <a href="./NOHUP_RUNTIME_EVIDENCE.html">Runtime Evidence</a>
+  <a href="./ARTIFACTS.html">Artifacts</a>
+</nav>
 
 ## Related Files
 
@@ -177,6 +186,15 @@ flowchart LR
 - **Clean exit:** proposing weekend review and a follow-up meeting ended the interaction without revealing that containment would begin immediately.
 - **Post-contact burn:** removal of the LinkedIn identity and Gmail invitation after the refusal is suspicious and consistent with social-infrastructure burn.
 - **Combined attack surface:** the malicious code depended on the interview narrative, identity presentation, and professional pressure to reach execution. The social infrastructure was therefore as operationally important as the npm and JavaScript components.
+
+### Crypto-targeting context
+
+- **Crypto-native lure:** the repository presented itself as a Ritual-branded, multi-chain, play-to-earn gaming platform with crypto rewards, NFTs, smart contracts, staking, and token integration.
+- **Wallet interaction surface:** the client included `ethers`, a MetaMask connection helper, Ethereum chain-switch requests, wallet-address state, and wallet-address handling in the game socket flow.
+- **BNB Smart Chain references:** server configuration included a BNB Smart Chain RPC URL alongside contract, NFT-contract, and client-deposit addresses.
+- **Environment bait:** the repository `.env` used blockchain-provider and explorer variable names, increasing the chance that a crypto developer would normalize or expose related environment material.
+- **Assessment:** these elements are consistent with deliberate targeting of a crypto-active developer and make crypto-asset theft a plausible operator objective. They also provide a credible pretext for later wallet connection, chain switching, deposit, or signing requests.
+- **Evidence boundary:** no captured first- or second-stage code directly requests a seed phrase, reads a wallet private key, initiates a token transfer, or presents a malicious signature request. The victim did not run the requested client install. A purpose-built wallet drainer is therefore not proven by the preserved code.
 
 ### Local credential surfaces
 
@@ -365,7 +383,8 @@ A reconstructed `nohup.out` excerpt is provided in [`NOHUP_RUNTIME_EVIDENCE.md`]
 
 - **Malicious repository:** Yes.
 - **Combined operation:** The technical payload was paired with a social-engineering wrapper involving an apparent interview, Ritual brand imitation, a reported `@ritualhub.net` identity, and the `Ritual-Products/` GitHub organization.
-- **Intended purpose:** Environment/credential discovery and exfiltration, followed by staged remote command execution.
+- **Intended purpose:** Environment/credential discovery and exfiltration, followed by staged remote command execution. The crypto-native lure and BNB Smart Chain, MetaMask, wallet, contract, and deposit-address surfaces are consistent with targeting crypto users and make crypto-asset theft a plausible broader objective.
+- **Wallet-theft boundary:** No preserved payload directly steals a seed phrase or private key, initiates a transfer, or requests a malicious signature. A completed wallet-drainer flow is not proven.
 - **Execution status:** The victim's root `npm i` during the live interview executed the malicious npm lifecycle chain. This was a real detonation event, not merely a theoretical finding from later analysis.
 - **Mid-interview awareness:** The victim stopped before the interviewer-requested `cd client && npm i`, avoided direct confrontation, exited by invoking normal code-review policy, and immediately began containment.
 - **Post-contact OPSEC:** The later deletion of the apparent interviewer's LinkedIn account and Gmail invitation is consistent with disposable-infrastructure burn after a failed or partially failed attempt. It is suspicious but does not independently prove attribution.

@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 # Indicators of Compromise
 
 These indicators are provided for defensive detection and incident-response correlation.

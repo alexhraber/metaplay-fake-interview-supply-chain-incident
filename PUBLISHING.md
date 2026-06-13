@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 # Publishing
 
 This repository is intended to be published with GitHub Pages as a project site.
