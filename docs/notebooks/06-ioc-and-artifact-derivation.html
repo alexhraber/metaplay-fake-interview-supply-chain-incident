@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>04-ioc-extraction</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>06-ioc-and-artifact-derivation</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7796,30 +7796,34 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=39e8d27d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0073ae5d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Public-IOC-Extraction">Public IOC Extraction<a class="anchor-link" href="#Public-IOC-Extraction">¶</a></h1><blockquote>
-<p><strong>Safety:</strong> This notebook uses fake fixtures or already-public indicators. It does not execute attacker code, read the process environment, or contact network infrastructure.</p>
+<h1 id="IOC-and-Artifact-Derivation">IOC and Artifact Derivation<a class="anchor-link" href="#IOC-and-Artifact-Derivation">¶</a></h1><blockquote>
+<p><strong>Safety boundary:</strong> This workbook performs static analysis of sanitized excerpts, fake fixtures, and derived public metadata. It does not execute attacker code, inspect the analyst's environment, or contact any network.</p>
 </blockquote>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=579cb026">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0788f9c7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Parse indicators already published in <code>IOCs.md</code>. Treat every URL and address as inert text; never request it.</p>
+<h2 id="Derivation-Goal">Derivation Goal<a class="anchor-link" href="#Derivation-Goal">¶</a></h2><p>An IOC list should be reproducible from public evidence without exposing raw
+private captures. This workbook normalizes a reviewed catalog containing only
+already-public indicators and sanitized artifact references.</p>
+<p>Indicators are not verdicts. Shared hosting addresses, repository names, and
+generic command fragments need context, time bounds, and corroboration.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f035c9ab">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=0530ec48">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7827,18 +7831,36 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<div class="highlight hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="n">ioc_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"../fixtures/iocs.public.json"</span><span class="p">)</span>
-<span class="n">iocs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">ioc_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span>
-<span class="p">[(</span><span class="n">item</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="s2">"context"</span><span class="p">])</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iocs</span><span class="p">[</span><span class="s2">"indicators"</span><span class="p">]]</span>
+<span class="n">catalog</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="s2">"../fixtures/public-artifact-catalog.json"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">records</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">[</span><span class="s2">"records"</span><span class="p">]</span>
+
+<span class="n">normalized</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">"value"</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s2">"type"</span><span class="p">:</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">"value"</span><span class="p">:</span> <span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s2">"context"</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">"context"</span><span class="p">],</span>
+    <span class="p">})</span>
+
+<span class="n">normalized</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e4b7f15f">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=fb140a9e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7846,15 +7868,68 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<div class="highlight hl-python"><pre><span></span><span class="n">grouped</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">normalized</span><span class="p">:</span>
+    <span class="n">grouped</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 
-<span class="n">Counter</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iocs</span><span class="p">[</span><span class="s2">"indicators"</span><span class="p">])</span>
+<span class="p">{</span><span class="n">ioc_type</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="k">for</span> <span class="n">ioc_type</span><span class="p">,</span> <span class="n">items</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">grouped</span><span class="o">.</span><span class="n">items</span><span class="p">())}</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=4189ae04">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=584597dc">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Public-Indicator-Classes">Public Indicator Classes<a class="anchor-link" href="#Public-Indicator-Classes">¶</a></h2><table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Defensive use</th>
+<th>Caution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>domains and URLs</td>
+<td>proxy/DNS review, repository scanning</td>
+<td>serverless infrastructure may be shared or ephemeral</td>
+</tr>
+<tr>
+<td>direct IP and port</td>
+<td>firewall, flow, process-network correlation</td>
+<td>time-bound ownership and reuse matter</td>
+</tr>
+<tr>
+<td>SHA-256</td>
+<td>exact artifact matching</td>
+<td>hash covers only the captured byte sequence</td>
+</tr>
+<tr>
+<td>lifecycle command</td>
+<td>manifest and endpoint review</td>
+<td>fragments can have benign uses</td>
+</tr>
+<tr>
+<td>custom header</td>
+<td>proxy or application log hunting</td>
+<td>requires HTTP visibility</td>
+</tr>
+<tr>
+<td>artifact reference</td>
+<td>evidence navigation</td>
+<td>not itself an IOC</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b628a9bb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7862,39 +7937,38 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">publication_record</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">"type"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span>
-        <span class="s2">"value"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"value"</span><span class="p">],</span>
-        <span class="s2">"context"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"context"</span><span class="p">],</span>
-        <span class="s2">"action"</span><span class="p">:</span> <span class="s2">"correlate; do not contact"</span><span class="p">,</span>
-    <span class="p">}</span>
+<div class="highlight hl-python"><pre><span></span><span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+<span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="p">[</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">,</span> <span class="s2">"context"</span><span class="p">])</span>
+<span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
+<span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span>
+<span class="n">csv_preview</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
 
-<span class="p">[</span><span class="n">publication_record</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iocs</span><span class="p">[</span><span class="s2">"indicators"</span><span class="p">]]</span>
+<span class="n">json_preview</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">normalized</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">{</span><span class="s2">"csv"</span><span class="p">:</span> <span class="n">csv_preview</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">:</span> <span class="n">json_preview</span><span class="p">}</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=eea9b94a">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=27f3abd7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>An IOC supports correlation. Shared hosting indicators do not independently establish attribution.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=98fe18aa">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Evidence-Gate">Evidence Gate<a class="anchor-link" href="#Evidence-Gate">¶</a></h2><p>State the strongest supported claim, strongest unsupported claim, missing proof, one preventive control, and one detective control.</p>
+<h2 id="Evidence-Hygiene">Evidence Hygiene<a class="anchor-link" href="#Evidence-Hygiene">¶</a></h2><p>The catalog includes the public stage hash, public endpoints, direct-IP IOC,
+port, lifecycle command, request marker, repository identity, and references
+to public evidence documents. It excludes environment values, credentials,
+cookies, auth headers, and the raw stage body.</p>
+<p><strong>Strongest supported claim:</strong> these indicators occur in the preserved evidence
+and public report.</p>
+<p><strong>Not proven by an IOC match alone:</strong> malicious intent for every appearance or
+successful compromise of another host.</p>
+<p><strong>Detection:</strong> combine at least two dimensions, such as npm ancestry plus a
+custom header, or direct-IP egress plus the stage hash.</p>
+<p><strong>Confidence upgrade:</strong> timestamped DNS/proxy/flow telemetry, file provenance,
+and process ancestry tied to the matching indicator.</p>
 </div>
 </div>
 </div>

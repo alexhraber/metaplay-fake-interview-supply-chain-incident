@@ -3,19 +3,23 @@ layout: default
 title: "Defensive Analysis Notebooks"
 ---
 
-# Defensive Analysis Notebooks
+# Technical Analysis Notebooks
 
-These notebooks are static-analysis and reasoning exercises. Source notebooks
-remain output-light and use fake fixtures or already-public indicators.
+These public notebooks are the technical appendix to the incident report. They
+focus on exploit mechanics, static code analysis, data flow, network semantics,
+IOC derivation, and evidence-bound reporting. Source notebooks are sanitized,
+output-light, and rendered as static HTML.
 
 | Notebook | Kernel | Purpose |
 |---|---|---|
-| `00-python-lab-healthcheck` | Python | Verify the local analysis environment without reading secrets |
-| `01-deno-js-runtime-healthcheck` | Deno | Verify safe JavaScript primitives using loopback-only data |
-| `02-package-json-lifecycle-analysis` | Deno | Identify npm lifecycle execution from a fake manifest |
-| `03-stage2-static-deobfuscation-notes` | Deno | Practice inert decoding and staged-loader reasoning |
-| `04-ioc-extraction` | Python | Parse the already-public IOC fixture without contacting it |
-| `05-behavior-map` | Python | Map capability, execution, transmission, and controls |
+| `00-analysis-map-and-safety-boundary` | Python | Map the incident architecture and public evidence boundary |
+| `01-npm-lifecycle-entrypoint-analysis` | Python | Parse the lifecycle entrypoint, shell fallback, and process ancestry |
+| `02-node-import-chain-and-side-effects` | Python | Reconstruct CommonJS imports, top-level calls, and authority transfer |
+| `03-first-stage-env-exfil-dataflow` | Python | Model bulk environment capture and first-stage request construction |
+| `04-stage-two-static-feature-analysis` | Python | Analyze derived stage-two features without publishing the payload |
+| `05-beacon-and-network-path-analysis` | Deno | Build a fake loopback beacon and reason about `ENETUNREACH` |
+| `06-ioc-and-artifact-derivation` | Python | Normalize public IOCs and generate defender-friendly output |
+| `07-evidence-boundary-and-claim-classification` | Python | Classify claims as proven, observed, likely, or unsupported |
 
 [Open the rendered notebook index](./docs/notebooks/index.html).
 
@@ -33,3 +37,24 @@ remain output-light and use fake fixtures or already-public indicators.
 - Evidence claims distinguish capability, observed execution, likely
   transmission, proven transmission, and not-evidenced behavior.
 
+## Public and Private Scope
+
+The public notebooks teach code-path reconstruction and evidence reasoning from
+sanitized material. The separate private learning lab retains the broader
+curriculum and loopback-only simulators. Raw hostile payloads, raw environment
+captures, and private credential findings are not public notebook inputs.
+
+## Rebuild and Render
+
+From the repository development environment:
+
+```bash
+python scripts/build-public-notebooks.py
+python scripts/sanitize-notebooks.py --write notebooks
+bash scripts/check-public-safety.sh
+bash scripts/render-notebooks.sh
+```
+
+The builder does not execute notebook cells. The sanitizer clears outputs and
+rejects dangerous constructs in executable cells. The render step writes only
+the reviewed public set to `docs/notebooks/`.

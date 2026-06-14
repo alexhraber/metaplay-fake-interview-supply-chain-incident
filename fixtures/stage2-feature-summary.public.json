@@ -1,0 +1,80 @@
+{
+  "artifact": "captured stage-two JavaScript",
+  "publication": "derived features only; raw body withheld",
+  "sha256": "bdc6b8a1c098ce32683d496e10c769cffe52ecd3a0c47b563b36849ca37bed7d",
+  "byte_length": 3686,
+  "features": [
+    {
+      "feature": "host profiling",
+      "present": true,
+      "evidence_type": "static feature",
+      "publication_form": "summary only"
+    },
+    {
+      "feature": "OS type, release, and platform",
+      "present": true,
+      "evidence_type": "static feature",
+      "publication_form": "summary only"
+    },
+    {
+      "feature": "hostname collection",
+      "present": true,
+      "evidence_type": "static feature",
+      "publication_form": "summary only"
+    },
+    {
+      "feature": "network interface and MAC selection",
+      "present": true,
+      "evidence_type": "static feature",
+      "publication_form": "summary only"
+    },
+    {
+      "feature": "complete process environment copy",
+      "present": true,
+      "evidence_type": "static feature",
+      "publication_form": "summary only"
+    },
+    {
+      "feature": "query-string beacon construction",
+      "present": true,
+      "evidence_type": "static feature",
+      "publication_form": "field names only"
+    },
+    {
+      "feature": "fixed-interval polling",
+      "present": true,
+      "evidence_type": "static feature",
+      "publication_form": "5000 ms interval"
+    },
+    {
+      "feature": "direct-IP command endpoint",
+      "present": true,
+      "evidence_type": "public IOC",
+      "publication_form": "published in IOCs.md"
+    },
+    {
+      "feature": "HTTP fetch and JSON response parsing",
+      "present": true,
+      "evidence_type": "static feature",
+      "publication_form": "summary only"
+    },
+    {
+      "feature": "conditional dynamic task evaluation",
+      "present": true,
+      "evidence_type": "static feature",
+      "publication_form": "described, not implemented"
+    },
+    {
+      "feature": "wallet-file reads",
+      "present": false,
+      "evidence_type": "not shown in captured stage",
+      "publication_form": "not claimed"
+    },
+    {
+      "feature": "credential-file enumeration",
+      "present": false,
+      "evidence_type": "not shown in captured stage",
+      "publication_form": "not claimed"
+    }
+  ]
+}

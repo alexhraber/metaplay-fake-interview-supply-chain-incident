@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>00-python-lab-healthcheck</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>00-analysis-map-and-safety-boundary</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7796,30 +7796,100 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b37a7ba8">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d59a876f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Python-Lab-Healthcheck">Python Lab Healthcheck<a class="anchor-link" href="#Python-Lab-Healthcheck">¶</a></h1><blockquote>
-<p><strong>Safety:</strong> This notebook uses fake fixtures or already-public indicators. It does not execute attacker code, read the process environment, or contact network infrastructure.</p>
+<h1 id="Analysis-Map-and-Safety-Boundary">Analysis Map and Safety Boundary<a class="anchor-link" href="#Analysis-Map-and-Safety-Boundary">¶</a></h1><blockquote>
+<p><strong>Safety boundary:</strong> This workbook performs static analysis of sanitized excerpts, fake fixtures, and derived public metadata. It does not execute attacker code, inspect the analyst's environment, or contact any network.</p>
 </blockquote>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=bccb2bdd">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7833d73b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Verify the local Python notebook runtime without inspecting environment variables, home directories, or private evidence.</p>
+<h2 id="Question-and-Method">Question and Method<a class="anchor-link" href="#Question-and-Method">¶</a></h2><p>This technical appendix reconstructs how a root dependency install crossed
+several trust boundaries:</p>
+<div class="highlight"><pre><span></span>root npm install
+  -&gt; prepare lifecycle script
+  -&gt; backgrounded Node server
+  -&gt; CommonJS import-time side effect
+  -&gt; bulk environment POST
+  -&gt; returned JavaScript executed with CommonJS access
+  -&gt; host-profile beacon attempt
+  -&gt; direct-IP connect failure
+</pre></div>
+<p>The notebooks analyze that chain without replaying it. Their governing rule is:</p>
+<blockquote>
+<p><strong>capability != observed execution != proven transmission</strong></p>
+</blockquote>
+<p>Static code can establish capability. Runtime traces can establish execution.
+Network or server-side evidence is needed to establish completed transmission.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=115cf4ce">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8af62acc">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Artifact-and-Publication-Map">Artifact and Publication Map<a class="anchor-link" href="#Artifact-and-Publication-Map">¶</a></h2><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Artifact</th>
+<th>Public treatment</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>npm lifecycle</td>
+<td>preserved package manifest / sanitized excerpt</td>
+<td>analyzed directly</td>
+<td>automatic entrypoint</td>
+</tr>
+<tr>
+<td>Node import chain</td>
+<td><code>server.js</code>, <code>socket/index.js</code>, <code>controllers/auth.js</code></td>
+<td>call graph and reviewed excerpts</td>
+<td>import-time side effects</td>
+</tr>
+<tr>
+<td>environment exfiltration</td>
+<td>auth controller / redacted schema</td>
+<td>data-flow model</td>
+<td>sensitive primitive</td>
+</tr>
+<tr>
+<td>stage two</td>
+<td>hash plus derived feature summary</td>
+<td>feature extraction only</td>
+<td>raw payload withheld</td>
+</tr>
+<tr>
+<td>C2 path</td>
+<td>public IOC plus reconstructed runtime error</td>
+<td>network-path reasoning</td>
+<td>no live contact</td>
+</tr>
+</tbody>
+</table>
+<p>The private evidence set also contains hostile source and raw captures. Those
+are not notebook dependencies and are intentionally not published.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=646a9fe4">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7827,54 +7897,82 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-
-<span class="p">{</span>
-    <span class="s2">"python"</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">(),</span>
-    <span class="s2">"implementation"</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_implementation</span><span class="p">(),</span>
-    <span class="s2">"major_minor"</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
-    <span class="s2">"safe_checks_only"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<div class="highlight hl-python"><pre><span></span><span class="n">layers</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">"step"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"boundary"</span><span class="p">:</span> <span class="s2">"package manager -&gt; shell"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"What can install execute?"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"step"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"boundary"</span><span class="p">:</span> <span class="s2">"entrypoint -&gt; import graph"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"What runs before a request?"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"step"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"boundary"</span><span class="p">:</span> <span class="s2">"process -&gt; environment"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"What data is reachable?"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"step"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"boundary"</span><span class="p">:</span> <span class="s2">"host -&gt; remote response"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"What authority does returned data receive?"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"step"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"boundary"</span><span class="p">:</span> <span class="s2">"stage two -&gt; C2"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"Did the connection complete?"</span><span class="p">},</span>
+<span class="p">]</span>
+<span class="n">layers</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8e928b64">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="What-Is-Withheld">What Is Withheld<a class="anchor-link" href="#What-Is-Withheld">¶</a></h2><ul>
+<li>the raw executable stage-two body;</li>
+<li>raw process-environment captures;</li>
+<li>credential, token, browser, shell-history, or wallet reports;</li>
+<li>private filesystem inventories;</li>
+<li>live endpoint interaction and tasking logic.</li>
+</ul>
+<p>This is not loss of analytical rigor. The public substitutes are hashes,
+lengths, line references, sanitized excerpts, feature presence, and bounded
+runtime observations. Those are sufficient to teach the reasoning path without
+redistributing executable hostile content.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d824a71c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-python"><pre><span></span><span class="n">claim_levels</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"capability"</span><span class="p">:</span> <span class="s2">"The code can perform an action."</span><span class="p">,</span>
+    <span class="s2">"observed"</span><span class="p">:</span> <span class="s2">"A local artifact shows that the path ran."</span><span class="p">,</span>
+    <span class="s2">"likely"</span><span class="p">:</span> <span class="s2">"Multiple artifacts support the inference, but one proof source is absent."</span><span class="p">,</span>
+    <span class="s2">"proven transmission"</span><span class="p">:</span> <span class="s2">"Network or receiver evidence shows data completed the path."</span><span class="p">,</span>
+    <span class="s2">"not evidenced"</span><span class="p">:</span> <span class="s2">"The available artifacts do not show the behavior."</span><span class="p">,</span>
 <span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=39ef513a">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="n">required</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"json"</span><span class="p">,</span> <span class="s2">"pathlib"</span><span class="p">,</span> <span class="s2">"hashlib"</span><span class="p">}</span>
-<span class="nb">sorted</span><span class="p">(</span><span class="n">required</span><span class="p">)</span>
+<span class="n">claim_levels</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5fbed04a">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6b08a80e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>This proves the notebook kernel can run ordinary local Python. It does not prove that private evidence is safe to load.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=01665531">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Evidence-Gate">Evidence Gate<a class="anchor-link" href="#Evidence-Gate">¶</a></h2><p>State the strongest supported claim, strongest unsupported claim, missing proof, one preventive control, and one detective control.</p>
+<h2 id="Analytical-Questions-Used-Throughout">Analytical Questions Used Throughout<a class="anchor-link" href="#Analytical-Questions-Used-Throughout">¶</a></h2><p>Every workbook asks:</p>
+<ol>
+<li>What code path is under analysis?</li>
+<li>Which artifact supports it?</li>
+<li>What did the code do, and what authority did it enable?</li>
+<li>What was actually observed?</li>
+<li>What was not proven?</li>
+<li>Which control could prevent or detect it?</li>
+<li>Which additional telemetry would raise confidence?</li>
+</ol>
+<p><strong>Strongest supported claim:</strong> the install path reached downloaded stage-two
+execution and a direct-IP connection attempt.</p>
+<p><strong>Strongest unsupported claim:</strong> that direct-IP tasking completed or that
+credential or wallet files were stolen.</p>
 </div>
 </div>
 </div>

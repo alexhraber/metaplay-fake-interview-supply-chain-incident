@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>05-behavior-map</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>07-evidence-boundary-and-claim-classification</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7796,30 +7796,38 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=872e8f47">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c8c7bfa4">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Behavior-and-Evidence-Map">Behavior and Evidence Map<a class="anchor-link" href="#Behavior-and-Evidence-Map">¶</a></h1><blockquote>
-<p><strong>Safety:</strong> This notebook uses fake fixtures or already-public indicators. It does not execute attacker code, read the process environment, or contact network infrastructure.</p>
+<h1 id="Evidence-Boundary-and-Claim-Classification">Evidence Boundary and Claim Classification<a class="anchor-link" href="#Evidence-Boundary-and-Claim-Classification">¶</a></h1><blockquote>
+<p><strong>Safety boundary:</strong> This workbook performs static analysis of sanitized excerpts, fake fixtures, and derived public metadata. It does not execute attacker code, inspect the analyst's environment, or contact any network.</p>
 </blockquote>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=31853cf0">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3892be55">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Map claims to evidence classes. The governing rule is: <code>capability != observed execution != proven transmission</code>.</p>
+<h2 id="Why-This-Notebook-Matters">Why This Notebook Matters<a class="anchor-link" href="#Why-This-Notebook-Matters">¶</a></h2><p>Incident reports fail when possibility is rewritten as fact. This case has a
+clear ladder:</p>
+<div class="highlight"><pre><span></span>code capability
+  != observed local execution
+  != likely transmission
+  != proven completed transmission
+</pre></div>
+<p>The matrix below turns each material claim into a classification, supporting
+artifact, missing proof source, publication-safe wording, and defensive control.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=333043a0">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=ceda299e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7829,24 +7837,92 @@ a.anchor-link {
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-python"><pre><span></span><span class="n">claims</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"Install lifecycle could start the server"</span><span class="p">,</span>
-        <span class="s2">"class"</span><span class="p">:</span> <span class="s2">"capability"</span><span class="p">,</span>
-        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"review manifests and disable scripts"</span><span class="p">,</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"root npm install was executed"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"observed"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"victim account plus preserved install/runtime context"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"complete shell audit trail"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"The user ran the root install."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"review before install; isolated host"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"Downloaded stage path produced a connect error"</span><span class="p">,</span>
-        <span class="s2">"class"</span><span class="p">:</span> <span class="s2">"observed execution"</span><span class="p">,</span>
-        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"egress isolation and process telemetry"</span><span class="p">,</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"prepare supplied automatic execution capability"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"proven"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"preserved pre-containment package manifest"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"none for capability"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"The prepare lifecycle created an automatic execution path."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"disable lifecycle scripts during first review"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"Direct-IP command service received the beacon"</span><span class="p">,</span>
-        <span class="s2">"class"</span><span class="p">:</span> <span class="s2">"not proven"</span><span class="p">,</span>
-        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"packet capture or proxy logging"</span><span class="p">,</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"node server launched through the fallback path"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"observed"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"manifest command plus reconstructed nohup runtime evidence"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"full process accounting"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"Runtime evidence is consistent with the Linux fallback launch."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"alert on npm -&gt; shell -&gt; nohup -&gt; node ancestry"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"Credential files were stolen"</span><span class="p">,</span>
-        <span class="s2">"class"</span><span class="p">:</span> <span class="s2">"not evidenced"</span><span class="p">,</span>
-        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"file-access telemetry and credential isolation"</span><span class="p">,</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"server import chain reached socket/auth logic"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"observed"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"static import chain plus executor origin in runtime trace"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"module-load telemetry"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"The import chain reached the first-stage loader path."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"review top-level module calls"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"environment POST path occurred"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"likely"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"first-stage code plus returned stage-two execution"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"receiver log or preserved request body"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"The first-stage environment POST likely succeeded."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"empty environment and egress deny"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"serverless endpoint returned stage-two JavaScript"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"proven"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"captured response hash plus runtime executor trace"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"none for returned captured bytes"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"The endpoint returned the captured stage, which the loader executed."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"never grant response text execution authority"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"stage two attempted direct-IP C2"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"observed"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"public IOC plus connect ENETUNREACH runtime error"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"full packet capture"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"The stage attempted a direct-IP connection that failed in the observed run."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"direct-IP egress block and process-network monitoring"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"direct-IP C2 completed"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"not proven"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"observed error weighs against completion"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"successful handshake, response, or server log"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"Direct-IP C2 completion was not demonstrated."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"retain flow and packet telemetry"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"remote tasking executed"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"not proven"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"capability exists in static stage features"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"task response and resulting local effect"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"Remote tasking was possible but not observed."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"block egress and detect response-to-code flows"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"credential files were stolen"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"not evidenced"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"not shown in captured stage"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"file access plus transmission evidence"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"Credential-file theft was not evidenced."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"secret isolation and file-access telemetry"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"claim"</span><span class="p">:</span> <span class="s2">"wallet files were stolen"</span><span class="p">,</span>
+        <span class="s2">"classification"</span><span class="p">:</span> <span class="s2">"not evidenced"</span><span class="p">,</span>
+        <span class="s2">"artifact"</span><span class="p">:</span> <span class="s2">"not shown in captured stage"</span><span class="p">,</span>
+        <span class="s2">"missing_evidence"</span><span class="p">:</span> <span class="s2">"wallet-file access plus transmission evidence"</span><span class="p">,</span>
+        <span class="s2">"public_wording"</span><span class="p">:</span> <span class="s2">"Wallet-file theft was not evidenced."</span><span class="p">,</span>
+        <span class="s2">"control"</span><span class="p">:</span> <span class="s2">"separate wallets from review hosts"</span><span class="p">,</span>
     <span class="p">},</span>
 <span class="p">]</span>
 <span class="n">claims</span>
@@ -7855,7 +7931,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d22ee2e3">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d61b199b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7863,36 +7939,86 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<div class="highlight hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
 
-<span class="n">by_class</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">claims</span><span class="p">:</span>
-    <span class="n">by_class</span><span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s2">"class"</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"claim"</span><span class="p">])</span>
-<span class="nb">dict</span><span class="p">(</span><span class="n">by_class</span><span class="p">)</span>
+<span class="n">Counter</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"classification"</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">claims</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=bf7462ec">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e9e6c8f3">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Filesystem reachability is not a theft claim. Attempted network access is not completed transmission. State the missing evidence.</p>
+<h2 id="Reading-the-Matrix">Reading the Matrix<a class="anchor-link" href="#Reading-the-Matrix">¶</a></h2><ul>
+<li><strong>Proven</strong> answers a narrow proposition directly from preserved evidence.</li>
+<li><strong>Observed</strong> means runtime or user evidence shows the path occurred.</li>
+<li><strong>Likely</strong> is a strong inference with a named missing proof source.</li>
+<li><strong>Plausible</strong> should be reserved for architecturally possible follow-on action.</li>
+<li><strong>Not proven</strong> means evidence does not close the claim.</li>
+<li><strong>Not evidenced</strong> means the reviewed artifacts do not show the behavior.</li>
+</ul>
+<p>Absence of proof is not always proof of absence. But public wording must remain
+inside the available evidence, especially for high-impact claims such as
+credential or wallet theft.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e70438e6">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-python"><pre><span></span><span class="n">publication_test</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"Does the wording name the supporting artifact?"</span><span class="p">,</span>
+        <span class="s2">"required"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"Does it separate capability from execution?"</span><span class="p">,</span>
+        <span class="s2">"required"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"Does it identify missing network or receiver evidence?"</span><span class="p">,</span>
+        <span class="s2">"required"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"Would a reasonable reader mistake possibility for fact?"</span><span class="p">,</span>
+        <span class="s2">"required_answer"</span><span class="p">:</span> <span class="s2">"no"</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+<span class="n">publication_test</span>
+</pre></div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b93de3f1">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=757b8bb6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Evidence-Gate">Evidence Gate<a class="anchor-link" href="#Evidence-Gate">¶</a></h2><p>State the strongest supported claim, strongest unsupported claim, missing proof, one preventive control, and one detective control.</p>
+<h2 id="Final-Evidence-Bound-Conclusion">Final Evidence-Bound Conclusion<a class="anchor-link" href="#Final-Evidence-Bound-Conclusion">¶</a></h2><p>The strongest public conclusion is that the root install activated the
+lifecycle path, the import chain reached the loader, returned stage-two code
+executed, and that stage attempted a direct-IP connection. The observed
+connection failed with <code>ENETUNREACH</code>.</p>
+<p>The first-stage environment POST likely completed because a stage was returned,
+but the exact received body is withheld and not fully asserted. Direct-IP C2
+completion, remote task execution, credential-file theft, and wallet-file theft
+remain unproven or not evidenced.</p>
+<p>The operational lesson is broader than this repository: treat package install,
+module import, remote response handling, environment reachability, and network
+egress as explicit trust boundaries. Preserve enough telemetry to distinguish
+what code could do from what it actually did.</p>
 </div>
 </div>
 </div>

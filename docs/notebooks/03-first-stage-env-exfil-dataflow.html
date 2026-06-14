@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>03-stage2-static-deobfuscation-notes</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>03-first-stage-env-exfil-dataflow</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7796,30 +7796,43 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=597360ae">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=44a977ed">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Stage-Two-Static-Deobfuscation-Notes">Stage-Two Static Deobfuscation Notes<a class="anchor-link" href="#Stage-Two-Static-Deobfuscation-Notes">¶</a></h1><blockquote>
-<p><strong>Safety:</strong> This notebook uses fake fixtures or already-public indicators. It does not execute attacker code, read the process environment, or contact network infrastructure.</p>
+<h1 id="First-Stage-Environment-Exfiltration-Dataflow">First-Stage Environment Exfiltration Dataflow<a class="anchor-link" href="#First-Stage-Environment-Exfiltration-Dataflow">¶</a></h1><blockquote>
+<p><strong>Safety boundary:</strong> This workbook performs static analysis of sanitized excerpts, fake fixtures, and derived public metadata. It does not execute attacker code, inspect the analyst's environment, or contact any network.</p>
 </blockquote>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=72f48653">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9060caee">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Practice safe decoding and behavior classification on invented training strings. The captured payload is intentionally withheld.</p>
+<h2 id="Data-Flow">Data Flow<a class="anchor-link" href="#Data-Flow">¶</a></h2><div class="highlight"><pre><span></span>project configuration
+  -&gt; dotenv-style loader
+  -&gt; process environment
+  -&gt; bulk object copy
+  -&gt; POST request body
+  -&gt; serverless endpoint
+  -&gt; JavaScript response
+</pre></div>
+<p>The dangerous primitive is not one particular API key. It is bulk capture of a
+developer process environment, where cloud credentials, package tokens,
+service URLs, and shell context commonly coexist.</p>
+<p>The published first-stage helper spread <code>process.env</code> into the POST body and
+used the request marker <code>x-app-request: ip-check</code>. The exact source remains in
+the incident report; executable cells below use only fake values.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=9ee3415c">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e2b0cce5">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7827,15 +7840,105 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-typescript"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">fakeEncoded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"aHR0cDovLzEyNy4wLjAuMTo5MDAxL2FwaS9jaGVja1N0YXR1cw=="</span><span class="p">;</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">decoded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">atob</span><span class="p">(</span><span class="nx">fakeEncoded</span><span class="p">);</span>
-<span class="p">({</span><span class="w"> </span><span class="nx">decoded</span><span class="p">,</span><span class="w"> </span><span class="nx">loopbackOnly</span><span class="o">:</span><span class="w"> </span><span class="kt">decoded.startsWith</span><span class="p">(</span><span class="s2">"http://127.0.0.1:"</span><span class="p">)</span><span class="w"> </span><span class="p">});</span>
+<div class="highlight hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">fake_env</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"../fixtures/fake-process-env.redacted.json"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">category</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"AWS_"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"cloud"</span>
+    <span class="k">if</span> <span class="s2">"ALCHEMY"</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"blockchain/API"</span>
+    <span class="k">if</span> <span class="s2">"AUTH"</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"auth/session"</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"npm_"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"npm lifecycle"</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"HOME"</span><span class="p">,</span> <span class="s2">"PATH"</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="s2">"path/home"</span>
+    <span class="k">return</span> <span class="s2">"local runtime"</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"env_key"</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+        <span class="s2">"category"</span><span class="p">:</span> <span class="n">category</span><span class="p">(</span><span class="n">key</span><span class="p">),</span>
+        <span class="s2">"why_it_matters"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"cloud"</span><span class="p">:</span> <span class="s2">"may authorize cloud API operations"</span><span class="p">,</span>
+            <span class="s2">"blockchain/API"</span><span class="p">:</span> <span class="s2">"may identify or authorize a service account"</span><span class="p">,</span>
+            <span class="s2">"auth/session"</span><span class="p">:</span> <span class="s2">"may expose service authentication configuration"</span><span class="p">,</span>
+            <span class="s2">"npm lifecycle"</span><span class="p">:</span> <span class="s2">"reveals execution context and triggering hook"</span><span class="p">,</span>
+            <span class="s2">"path/home"</span><span class="p">:</span> <span class="s2">"reveals host layout and command search path"</span><span class="p">,</span>
+            <span class="s2">"local runtime"</span><span class="p">:</span> <span class="s2">"describes application mode"</span><span class="p">,</span>
+        <span class="p">}[</span><span class="n">category</span><span class="p">(</span><span class="n">key</span><span class="p">)],</span>
+        <span class="s2">"real_value_published"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">fake_env</span>
+<span class="p">]</span>
+<span class="n">rows</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=71c408c3">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ee707823">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<table>
+<thead>
+<tr>
+<th>Env key</th>
+<th>Category</th>
+<th>Why it matters</th>
+<th>Real value published?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AWS_ACCESS_KEY_ID</code></td>
+<td>cloud</td>
+<td>may identify cloud principal</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>AWS_SECRET_ACCESS_KEY</code></td>
+<td>cloud</td>
+<td>may authorize cloud API operations</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>ALCHEMY_API_KEY</code></td>
+<td>blockchain/API</td>
+<td>may authorize or identify a service account</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>AUTH_API</code></td>
+<td>auth/session</td>
+<td>identifies authentication configuration</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>npm_lifecycle_event</code></td>
+<td>npm lifecycle</td>
+<td>confirms execution context</td>
+<td>no real capture</td>
+</tr>
+<tr>
+<td><code>HOME</code>, <code>PATH</code></td>
+<td>path/home</td>
+<td>describes host layout</td>
+<td>fake examples only</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=087a0143">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7843,18 +7946,41 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-typescript"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">fakeStringTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"system profile"</span><span class="p">,</span><span class="w"> </span><span class="s2">"poll interval"</span><span class="p">,</span><span class="w"> </span><span class="s2">"task response"</span><span class="p">];</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">rotation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">normalized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fakeStringTable</span>
-<span class="w">  </span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">rotation</span><span class="p">)</span>
-<span class="w">  </span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">fakeStringTable</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="nx">rotation</span><span class="p">));</span>
-<span class="nx">normalized</span><span class="p">;</span>
+<div class="highlight hl-python"><pre><span></span><span class="n">fake_request</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"method"</span><span class="p">:</span> <span class="s2">"POST"</span><span class="p">,</span>
+    <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"/api"</span><span class="p">,</span>
+    <span class="s2">"headers"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"content-type"</span><span class="p">:</span> <span class="s2">"application/json"</span><span class="p">,</span>
+        <span class="s2">"x-app-request"</span><span class="p">:</span> <span class="s2">"ip-check"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">"body"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"env"</span><span class="p">:</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="s2">"[redacted fake value]"</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">fake_env</span><span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+<span class="n">fake_request</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=9f4dbc5e">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3f7cef7a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Evidence-Boundary">Evidence Boundary<a class="anchor-link" href="#Evidence-Boundary">¶</a></h2><p>The strongest inference is that the first-stage POST likely succeeded because
+the loader received and executed a stage-two response. That is stronger than
+mere capability but weaker than a complete server-side record of every field
+received.</p>
+<p>The public repository does not disclose the raw captured body. It does not
+assert that every variable present in the victim shell was transmitted, and it
+does not turn potential credential exposure into a claim of credential use.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=573a9be4">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7862,34 +7988,34 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-typescript"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">summary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span>
-<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">Deno</span><span class="p">.</span><span class="nx">readTextFile</span><span class="p">(</span><span class="s2">"../fixtures/fake-stage2-response-summary.json"</span><span class="p">)</span>
-<span class="p">);</span>
-<span class="nx">summary</span><span class="p">;</span>
+<div class="highlight hl-python"><pre><span></span><span class="n">controls</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">"control"</span><span class="p">:</span> <span class="s2">"clean-room review user"</span><span class="p">,</span> <span class="s2">"breaks"</span><span class="p">:</span> <span class="s2">"credential reachability"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"control"</span><span class="p">:</span> <span class="s2">"empty inherited environment"</span><span class="p">,</span> <span class="s2">"breaks"</span><span class="p">:</span> <span class="s2">"bulk secret capture"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"control"</span><span class="p">:</span> <span class="s2">"container or disposable VM"</span><span class="p">,</span> <span class="s2">"breaks"</span><span class="p">:</span> <span class="s2">"host-data reachability"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"control"</span><span class="p">:</span> <span class="s2">"egress deny by default"</span><span class="p">,</span> <span class="s2">"breaks"</span><span class="p">:</span> <span class="s2">"POST completion"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"control"</span><span class="p">:</span> <span class="s2">"install scripts disabled for inspection"</span><span class="p">,</span> <span class="s2">"breaks"</span><span class="p">:</span> <span class="s2">"automatic entrypoint"</span><span class="p">},</span>
+<span class="p">]</span>
+<span class="n">controls</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f52d13c4">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a89dd42b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Static decoding can reveal architecture and indicators. It does not prove delivery, execution, or successful transmission.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a4dbe848">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Evidence-Gate">Evidence Gate<a class="anchor-link" href="#Evidence-Gate">¶</a></h2><p>State the strongest supported claim, strongest unsupported claim, missing proof, one preventive control, and one detective control.</p>
+<p><strong>Observed:</strong> the stage-two execution path was reached.</p>
+<p><strong>Likely:</strong> the environment POST completed sufficiently for the serverless
+endpoint to return the captured stage.</p>
+<p><strong>Not proven publicly:</strong> the exact request body received by the remote service.</p>
+<p><strong>Detection:</strong> alert on Node processes posting a broad environment-shaped JSON
+object, especially under npm ancestry and with unusual custom headers.</p>
+<p><strong>Confidence upgrade:</strong> endpoint logs, a packet capture with payload visibility,
+or a cryptographically preserved request body.</p>
 </div>
 </div>
 </div>

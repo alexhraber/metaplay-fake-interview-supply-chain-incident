@@ -459,14 +459,15 @@ A reconstructed `nohup.out` excerpt is provided in [`NOHUP_RUNTIME_EVIDENCE.md`]
 
 ## Explore the Analysis Notebooks
 
-These rendered notebooks provide a deeper walkthrough of the analysis process
-behind this report. They are static HTML exports, not live notebooks. They do
-not execute attacker-provided code in the browser.
+These notebooks are the technical appendix for readers who want to go deeper.
+They walk through the lifecycle script, Node import chain, environment
+exfiltration path, staged payload features, beacon/C2 model, IOC derivation, and
+claim-confidence boundaries.
 
-The collection is intended to help security researchers, developers, defenders,
-and curious readers explore the mechanics of the incident safely: npm lifecycle
-execution, staged JavaScript loading, IOC extraction, behavior mapping, and
-evidence-bound reasoning.
+They are static HTML exports, not live notebooks, and they do not execute
+attacker-provided code. The collection uses sanitized excerpts, fake data,
+public indicators, and derived summaries to explain how the exploit mechanics
+and evidence conclusions were reconstructed.
 
 [Explore the rendered analysis notebooks](./docs/notebooks/)
 

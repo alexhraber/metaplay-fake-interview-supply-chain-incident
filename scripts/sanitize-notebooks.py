@@ -17,6 +17,10 @@ PATTERNS = {
     "private absolute path": re.compile(r"/home/[A-Za-z0-9._-]+/"),
     "raw environment access": re.compile(r"process\.env|os\.environ|Deno\.env"),
     "external request": re.compile(r"\b(fetch|requests\.(get|post)|httpx\.(get|post))\s*\("),
+    "token or private-key material": re.compile(
+        r"sk-ant-|nvapi-|gho_|ghp_|github_pat_|xoxb-|xoxp-|"
+        r"BEGIN (?:OPENSSH|PGP) PRIVATE KEY"
+    ),
 }
 
 

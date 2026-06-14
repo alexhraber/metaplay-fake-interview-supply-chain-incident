@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>01-deno-js-runtime-healthcheck</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>04-stage-two-static-feature-analysis</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7796,30 +7796,38 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2b22aa1e">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3efa205a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Deno-JavaScript-Runtime-Healthcheck">Deno JavaScript Runtime Healthcheck<a class="anchor-link" href="#Deno-JavaScript-Runtime-Healthcheck">¶</a></h1><blockquote>
-<p><strong>Safety:</strong> This notebook uses fake fixtures or already-public indicators. It does not execute attacker code, read the process environment, or contact network infrastructure.</p>
+<h1 id="Stage-Two-Static-Feature-Analysis">Stage-Two Static Feature Analysis<a class="anchor-link" href="#Stage-Two-Static-Feature-Analysis">¶</a></h1><blockquote>
+<p><strong>Safety boundary:</strong> This workbook performs static analysis of sanitized excerpts, fake fixtures, and derived public metadata. It does not execute attacker code, inspect the analyst's environment, or contact any network.</p>
 </blockquote>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6f8e05eb">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9a1e4164">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Verify Deno and safe JavaScript data primitives. No permissions or network operations are requested.</p>
+<blockquote>
+<p><strong>Hostile-evidence warning:</strong> This notebook derives features from a reviewed
+summary of hostile evidence. It does not execute the payload and does not
+publish the raw body.</p>
+</blockquote>
+<h2 id="Publication-Safe-Method">Publication-Safe Method<a class="anchor-link" href="#Publication-Safe-Method">¶</a></h2><p>The private capture was inspected statically. The public derivative records
+only its SHA-256, byte length, feature presence, and bounded behavior summary.
+That supports reproducible claims without making the hostile body available as
+an executable artifact.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b0c2ef65">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e0ca7564">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7827,17 +7835,24 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-typescript"><pre><span></span><span class="p">({</span>
-<span class="w">  </span><span class="nx">deno</span><span class="o">:</span><span class="w"> </span><span class="kt">Deno.version.deno</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">typescript</span><span class="o">:</span><span class="w"> </span><span class="kt">Deno.version.typescript</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">safeChecksOnly</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span>
-<span class="p">});</span>
+<div class="highlight hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="s2">"../fixtures/stage2-feature-summary.public.json"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="p">{</span>
+    <span class="s2">"artifact"</span><span class="p">:</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"artifact"</span><span class="p">],</span>
+    <span class="s2">"sha256"</span><span class="p">:</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"sha256"</span><span class="p">],</span>
+    <span class="s2">"byte_length"</span><span class="p">:</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"byte_length"</span><span class="p">],</span>
+    <span class="s2">"raw_body_in_fixture"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5ce162db">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=70e47ff1">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7845,36 +7860,146 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-typescript"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">loopback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">URL</span><span class="p">(</span><span class="s2">"http://127.0.0.1:9001/api/checkStatus"</span><span class="p">);</span>
-<span class="nx">loopback</span><span class="p">.</span><span class="nx">search</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">URLSearchParams</span><span class="p">({</span>
-<span class="w">  </span><span class="nx">tid</span><span class="o">:</span><span class="w"> </span><span class="s2">"fake-token"</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">sysId</span><span class="o">:</span><span class="w"> </span><span class="s2">"fake-system-id"</span>
-<span class="p">}).</span><span class="nx">toString</span><span class="p">();</span>
-<span class="p">({</span><span class="w"> </span><span class="nx">origin</span><span class="o">:</span><span class="w"> </span><span class="kt">loopback.origin</span><span class="p">,</span><span class="w"> </span><span class="nx">pathname</span><span class="o">:</span><span class="w"> </span><span class="kt">loopback.pathname</span><span class="p">,</span><span class="w"> </span><span class="nx">query</span><span class="o">:</span><span class="w"> </span><span class="kt">loopback.search</span><span class="w"> </span><span class="p">});</span>
+<div class="highlight hl-python"><pre><span></span><span class="n">feature_rows</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"feature"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"feature"</span><span class="p">],</span>
+        <span class="s2">"present"</span><span class="p">:</span> <span class="s2">"yes"</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s2">"present"</span><span class="p">]</span> <span class="k">else</span> <span class="s2">"not shown"</span><span class="p">,</span>
+        <span class="s2">"evidence_type"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"evidence_type"</span><span class="p">],</span>
+        <span class="s2">"publication_form"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"publication_form"</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"features"</span><span class="p">]</span>
+<span class="p">]</span>
+<span class="n">feature_rows</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f7e06ab9">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3eb790eb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Constructing a URL object does not send a request. This cell models serialization only.</p>
+<h2 id="Feature-Interpretation">Feature Interpretation<a class="anchor-link" href="#Feature-Interpretation">¶</a></h2><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Present</th>
+<th>Evidence type</th>
+<th>Publication form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host profiling</td>
+<td>yes</td>
+<td>static feature</td>
+<td>summary only</td>
+</tr>
+<tr>
+<td>OS, hostname, network interface</td>
+<td>yes</td>
+<td>static feature</td>
+<td>summary only</td>
+</tr>
+<tr>
+<td>process environment copy</td>
+<td>yes</td>
+<td>static feature</td>
+<td>summary only</td>
+</tr>
+<tr>
+<td>query-string beacon</td>
+<td>yes</td>
+<td>static feature</td>
+<td>field names only</td>
+</tr>
+<tr>
+<td>fixed polling interval</td>
+<td>yes</td>
+<td>static feature</td>
+<td>5000 ms</td>
+</tr>
+<tr>
+<td>direct-IP C2</td>
+<td>yes</td>
+<td>public IOC</td>
+<td>published</td>
+</tr>
+<tr>
+<td>response JSON parsing</td>
+<td>yes</td>
+<td>static feature</td>
+<td>summary only</td>
+</tr>
+<tr>
+<td>conditional remote task evaluation</td>
+<td>yes</td>
+<td>static feature</td>
+<td>described, not implemented</td>
+</tr>
+<tr>
+<td>wallet-file reads</td>
+<td>not shown</td>
+<td>not evidenced in captured stage</td>
+<td>not claimed</td>
+</tr>
+<tr>
+<td>credential-file enumeration</td>
+<td>not shown</td>
+<td>not evidenced in captured stage</td>
+<td>not claimed</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2350c666">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-python"><pre><span></span><span class="n">counts</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"present_features"</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"present"</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"features"</span><span class="p">]),</span>
+    <span class="s2">"not_shown_features"</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="ow">not</span> <span class="n">item</span><span class="p">[</span><span class="s2">"present"</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"features"</span><span class="p">]),</span>
+    <span class="s2">"network_features"</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="nb">any</span><span class="p">(</span><span class="n">term</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s2">"feature"</span><span class="p">]</span> <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"query"</span><span class="p">,</span> <span class="s2">"polling"</span><span class="p">,</span> <span class="s2">"C2"</span><span class="p">,</span> <span class="s2">"HTTP"</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"features"</span><span class="p">]</span>
+    <span class="p">),</span>
+<span class="p">}</span>
+<span class="n">counts</span>
+</pre></div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5249467d">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6698bebb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Evidence-Gate">Evidence Gate<a class="anchor-link" href="#Evidence-Gate">¶</a></h2><p>State the strongest supported claim, strongest unsupported claim, missing proof, one preventive control, and one detective control.</p>
+<h2 id="Capability-Versus-Captured-Behavior">Capability Versus Captured Behavior<a class="anchor-link" href="#Capability-Versus-Captured-Behavior">¶</a></h2><p>Conditional task evaluation makes arbitrary follow-on behavior possible if an
+operator response is received. It does not prove that such a response arrived.
+Likewise, the architecture could support later credential or wallet theft, but
+those actions are not present in the captured stage and are not claimed.</p>
+<p><strong>Observed:</strong> downloaded stage-two JavaScript began executing and attempted the
+published direct-IP connection.</p>
+<p><strong>Static capability:</strong> host profiling, environment copying, periodic beaconing,
+and conditional operator task execution.</p>
+<p><strong>Not proven:</strong> successful direct-IP tasking or later file theft.</p>
+<p><strong>Detection:</strong> scan JavaScript for clusters of host profiling, environment
+copying, query serialization, polling timers, direct-IP URLs, and response
+content crossing into an execution primitive.</p>
+<p><strong>Confidence upgrade:</strong> a complete PCAP, proxy transcript, remote server logs,
+or local telemetry showing a task response and its effects.</p>
 </div>
 </div>
 </div>

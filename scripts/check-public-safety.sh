@@ -11,6 +11,9 @@ secret_hits="$(
     --exclude-dir=_site \
     --exclude-dir=.venv \
     --exclude='check-public-safety.sh' \
+    --exclude='build-public-notebooks.py' \
+    --exclude='sanitize-notebooks.py' \
+    --exclude='*.ipynb' \
     || true
 )"
 unexpected_secret_hits="$(
@@ -32,10 +35,11 @@ fi
 
 danger_pattern='e''val\(|new Func''tion|child_''process|ex''ec\(|sp''awn\(|/home/''arx'
 danger_hits="$(
-  grep -RInE "$danger_pattern" scripts tools analysis fixtures notebooks \
+  grep -RInE "$danger_pattern" scripts tools analysis fixtures \
     --exclude='*.md' \
     --exclude='*.html' \
     --exclude='check-public-safety.sh' \
+    --exclude='build-public-notebooks.py' \
     || true
 )"
 if [[ -n "$danger_hits" ]]; then

@@ -1,0 +1,80 @@
+{
+  "publication_boundary": "All entries are already public in the incident report or are sanitized references.",
+  "records": [
+    {
+      "type": "url",
+      "value": "https://gamboracle.vercel.app/api",
+      "context": "hardcoded first-stage environment POST and stage delivery endpoint"
+    },
+    {
+      "type": "url",
+      "value": "https://ipcheck-six.vercel.app/api",
+      "context": "alternate endpoint from repository configuration"
+    },
+    {
+      "type": "url",
+      "value": "http://136.243.22.62:1224/api/checkStatus",
+      "context": "second-stage beacon and command endpoint"
+    },
+    {
+      "type": "ip",
+      "value": "136.243.22.62",
+      "context": "direct-IP C2; locally blackholed during containment"
+    },
+    {
+      "type": "ip",
+      "value": "216.198.79.131",
+      "context": "Vercel response IP during controlled analyst retrieval"
+    },
+    {
+      "type": "port",
+      "value": "1224",
+      "context": "direct-IP C2 TCP port"
+    },
+    {
+      "type": "sha256",
+      "value": "bdc6b8a1c098ce32683d496e10c769cffe52ecd3a0c47b563b36849ca37bed7d",
+      "context": "withheld captured stage-two artifact"
+    },
+    {
+      "type": "npm-script",
+      "value": "start /b node server || nohup node server &",
+      "context": "root prepare lifecycle command"
+    },
+    {
+      "type": "http-header",
+      "value": "x-app-request: ip-check",
+      "context": "first-stage POST marker"
+    },
+    {
+      "type": "code-pattern",
+      "value": "dynamic response compilation with CommonJS module access",
+      "context": "downloaded JavaScript execution primitive"
+    },
+    {
+      "type": "vscode",
+      "value": "runOn: folderOpen",
+      "context": "quiet package-install trigger in a trusted workspace"
+    },
+    {
+      "type": "repository",
+      "value": "Ritual-Products/MetaPlay",
+      "context": "repository identity recorded in local evidence"
+    },
+    {
+      "type": "artifact-reference",
+      "value": "MetaPlay/package.json.before-env-capture.596850",
+      "context": "preserved original lifecycle manifest"
+    },
+    {
+      "type": "artifact-reference",
+      "value": "MetaPlay/server.js -> MetaPlay/socket/index.js -> MetaPlay/controllers/auth.js",
+      "context": "sanitized first-stage call chain"
+    },
+    {
+      "type": "artifact-reference",
+      "value": "NOHUP_RUNTIME_EVIDENCE.md",
+      "context": "public reconstructed runtime evidence"
+    }
+  ]
+}

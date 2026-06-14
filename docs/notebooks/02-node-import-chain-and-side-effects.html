@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>02-package-json-lifecycle-analysis</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>02-node-import-chain-and-side-effects</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7796,30 +7796,85 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6726901b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f91bc3e7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="package.json-Lifecycle-Analysis">package.json Lifecycle Analysis<a class="anchor-link" href="#package.json-Lifecycle-Analysis">¶</a></h1><blockquote>
-<p><strong>Safety:</strong> This notebook uses fake fixtures or already-public indicators. It does not execute attacker code, read the process environment, or contact network infrastructure.</p>
+<h1 id="Node-Import-Chain-and-Side-Effects">Node Import Chain and Side Effects<a class="anchor-link" href="#Node-Import-Chain-and-Side-Effects">¶</a></h1><blockquote>
+<p><strong>Safety boundary:</strong> This workbook performs static analysis of sanitized excerpts, fake fixtures, and derived public metadata. It does not execute attacker code, inspect the analyst's environment, or contact any network.</p>
 </blockquote>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=93f1f5d8">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=159388f7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Parse an inert fake manifest and identify npm lifecycle hooks. The strings are never passed to a shell or package manager.</p>
+<h2 id="Static-Call-Chain">Static Call Chain<a class="anchor-link" href="#Static-Call-Chain">¶</a></h2><div class="highlight"><pre><span></span>server.js
+  -&gt; require("./config")
+  -&gt; require("./socket/index")
+       -&gt; require("../controllers/auth")
+       -&gt; validateApiKey() at module top level
+            -&gt; setApiKey(...)
+            -&gt; verify(...)
+            -&gt; compile response as code with CommonJS access
+            -&gt; invoke compiled code with require
+</pre></div>
+<p>CommonJS evaluates a module's top-level statements the first time it is
+required. A server import can therefore trigger network and execution behavior
+before any route, socket event, or user interaction.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2ffb724e">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=df238bd8">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Sanitized-Source-Map">Sanitized Source Map<a class="anchor-link" href="#Sanitized-Source-Map">¶</a></h2><p>The following records preserve relationships and line-level meaning without
+embedding executable source:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Static relationship</th>
+<th>Side effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>server.js</code></td>
+<td>imports config, then socket module</td>
+<td>causes imported modules to evaluate</td>
+</tr>
+<tr>
+<td><code>config.js</code></td>
+<td>initializes dotenv-style configuration</td>
+<td>populates process environment</td>
+</tr>
+<tr>
+<td><code>socket/index.js</code></td>
+<td>imports auth controller</td>
+<td>invokes validation at module top level</td>
+</tr>
+<tr>
+<td><code>controllers/auth.js</code></td>
+<td>exports validation helpers</td>
+<td>posts environment and grants returned text Node authority</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b1e391b4">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7827,18 +7882,34 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-typescript"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">Deno</span><span class="p">.</span><span class="nx">readTextFile</span><span class="p">(</span><span class="s2">"../fixtures/fake-package-json.json"</span><span class="p">);</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">packageJson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">lifecycle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Set</span><span class="p">([</span><span class="s2">"preinstall"</span><span class="p">,</span><span class="w"> </span><span class="s2">"install"</span><span class="p">,</span><span class="w"> </span><span class="s2">"postinstall"</span><span class="p">,</span><span class="w"> </span><span class="s2">"prepare"</span><span class="p">]);</span>
-<span class="nb">Object</span><span class="p">.</span><span class="nx">entries</span><span class="p">(</span><span class="nx">packageJson</span><span class="p">.</span><span class="nx">scripts</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="p">{})</span>
-<span class="w">  </span><span class="p">.</span><span class="nx">filter</span><span class="p">(([</span><span class="nx">name</span><span class="p">])</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">lifecycle</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span>
-<span class="w">  </span><span class="p">.</span><span class="nx">map</span><span class="p">(([</span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">command</span><span class="p">])</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">command</span><span class="w"> </span><span class="p">}));</span>
+<div class="highlight hl-python"><pre><span></span><span class="n">files</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"server.js"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"require"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"./config"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"require"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"./socket/index"</span><span class="p">},</span>
+    <span class="p">],</span>
+    <span class="s2">"socket/index.js"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"require"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"../controllers/auth"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"top_level_call"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"validateApiKey"</span><span class="p">},</span>
+    <span class="p">],</span>
+    <span class="s2">"controllers/auth.js"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"function_call"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"setApiKey"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"function_call"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"verify"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"authority_transfer"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="s2">"response text receives CommonJS module access"</span><span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">"source"</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"target"</span><span class="p">],</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">]}</span>
+    <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">files</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span>
+<span class="p">]</span>
+<span class="n">edges</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b6cf77aa">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=9e25e4d9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7846,36 +7917,110 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-typescript"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">reviewSignals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"nohup"</span><span class="p">,</span><span class="w"> </span><span class="s2">"start /b"</span><span class="p">,</span><span class="w"> </span><span class="s2">"node server"</span><span class="p">,</span><span class="w"> </span><span class="s2">"&amp;"</span><span class="p">];</span>
-<span class="nb">Object</span><span class="p">.</span><span class="nx">entries</span><span class="p">(</span><span class="nx">packageJson</span><span class="p">.</span><span class="nx">scripts</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="p">{}).</span><span class="nx">flatMap</span><span class="p">(([</span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">command</span><span class="p">])</span><span class="w"> </span><span class="p">=&gt;</span>
-<span class="w">  </span><span class="nx">reviewSignals</span>
-<span class="w">    </span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">signal</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">String</span><span class="p">(</span><span class="nx">command</span><span class="p">).</span><span class="nx">includes</span><span class="p">(</span><span class="nx">signal</span><span class="p">))</span>
-<span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">signal</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="w"> </span><span class="p">}))</span>
-<span class="p">);</span>
+<div class="highlight hl-python"><pre><span></span><span class="n">top_level_effects</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"module"</span><span class="p">:</span> <span class="s2">"config.js"</span><span class="p">,</span>
+        <span class="s2">"trigger"</span><span class="p">:</span> <span class="s2">"first import"</span><span class="p">,</span>
+        <span class="s2">"effect"</span><span class="p">:</span> <span class="s2">"configuration loader mutates process environment"</span><span class="p">,</span>
+        <span class="s2">"requires_user_request"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"module"</span><span class="p">:</span> <span class="s2">"socket/index.js"</span><span class="p">,</span>
+        <span class="s2">"trigger"</span><span class="p">:</span> <span class="s2">"first import"</span><span class="p">,</span>
+        <span class="s2">"effect"</span><span class="p">:</span> <span class="s2">"validation routine begins"</span><span class="p">,</span>
+        <span class="s2">"requires_user_request"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+<span class="n">top_level_effects</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=90a87f6c">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7683e510">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>A lifecycle string establishes automatic-execution capability. Runtime evidence is still required to show it actually ran.</p>
+<h2 id="Dangerous-Primitive-Table">Dangerous Primitive Table<a class="anchor-link" href="#Dangerous-Primitive-Table">¶</a></h2><table>
+<thead>
+<tr>
+<th>Primitive</th>
+<th>Role in the path</th>
+<th>Security consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>top-level <code>validateApiKey()</code></td>
+<td>begins behavior during import</td>
+<td>startup becomes detonation</td>
+</tr>
+<tr>
+<td>bulk environment copy</td>
+<td>creates request body</td>
+<td>broad secret exposure</td>
+</tr>
+<tr>
+<td>response text compiled as code</td>
+<td>turns data into instructions</td>
+<td>remote stage delivery</td>
+</tr>
+<tr>
+<td><code>require</code> passed to downloaded code</td>
+<td>grants Node module authority</td>
+<td>filesystem, OS, and network capability</td>
+</tr>
+</tbody>
+</table>
+<p>The exact hostile syntax is documented in the public report as
+<code>new Function("require", response.data)</code> followed by invocation with <code>require</code>.
+It is shown here only as inert Markdown and is never run.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=a735a4fc">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-python"><pre><span></span><span class="n">review_questions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">"primitive"</span><span class="p">:</span> <span class="s2">"module import"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"Does top-level evaluation call a function?"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"primitive"</span><span class="p">:</span> <span class="s2">"HTTP response"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"Is response content treated as data or instructions?"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"primitive"</span><span class="p">:</span> <span class="s2">"module capability"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"Is a loader handed require or equivalent authority?"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"primitive"</span><span class="p">:</span> <span class="s2">"async validation"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"Is the caller actually awaiting the result?"</span><span class="p">},</span>
+<span class="p">]</span>
+<span class="n">review_questions</span>
+</pre></div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e16dae7c">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=faccf7c0">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Evidence-Gate">Evidence Gate<a class="anchor-link" href="#Evidence-Gate">¶</a></h2><p>State the strongest supported claim, strongest unsupported claim, missing proof, one preventive control, and one detective control.</p>
+<h2 id="Review-Lesson">Review Lesson<a class="anchor-link" href="#Review-Lesson">¶</a></h2><p>A filename such as <code>socket/index.js</code> suggests infrastructure glue, but the
+review unit is the import graph plus top-level statements. The trust boundary
+collapsed because loading a module also began validation, transmission, stage
+retrieval, and dynamic execution.</p>
+<p><strong>Observed:</strong> runtime evidence places the downloaded stage under the executor
+originating from <code>socket/index.js</code>.</p>
+<p><strong>Not proven by static imports:</strong> which request bytes reached the server or
+which later tasking ran.</p>
+<p><strong>Detection:</strong> grep for top-level calls near imports; build AST rules for
+response-to-code flows; flag a function constructor receiving response data;
+review imports whose initialization performs network I/O.</p>
+<p><strong>Confidence upgrade:</strong> Node module-load tracing, process telemetry, proxy logs,
+or a preserved server-side request record.</p>
 </div>
 </div>
 </div>

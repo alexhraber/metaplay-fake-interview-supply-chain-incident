@@ -8,34 +8,44 @@ OUTPUT = ROOT / "docs/notebooks/index.html"
 
 NOTEBOOKS = [
     (
-        "00-python-lab-healthcheck.html",
-        "Python Lab Healthcheck",
-        "Verifies the local analysis environment and Python/Jupyter assumptions.",
+        "00-analysis-map-and-safety-boundary.html",
+        "Analysis Map and Safety Boundary",
+        "Maps the complete incident architecture, public/private evidence boundary, and claim-confidence model.",
     ),
     (
-        "01-deno-js-runtime-healthcheck.html",
-        "Deno JavaScript Runtime Healthcheck",
-        "Verifies the JavaScript/TypeScript runtime path used for safe notebook exploration.",
+        "01-npm-lifecycle-entrypoint-analysis.html",
+        "npm Lifecycle Entrypoint Analysis",
+        "Dissects the prepare command, cross-platform fallback, backgrounding, and npm-to-Node process ancestry.",
     ),
     (
-        "02-package-json-lifecycle-analysis.html",
-        "package.json Lifecycle Analysis",
-        "Examines npm lifecycle execution risk and why dependency installation is code execution.",
+        "02-node-import-chain-and-side-effects.html",
+        "Node Import Chain and Side Effects",
+        "Reconstructs the CommonJS import graph, top-level calls, and response-to-code authority transfer.",
     ),
     (
-        "03-stage2-static-deobfuscation-notes.html",
-        "Stage-Two Static Deobfuscation Notes",
-        "Documents static reasoning about the staged payload without executing attacker code.",
+        "03-first-stage-env-exfil-dataflow.html",
+        "First-Stage Environment Exfiltration Dataflow",
+        "Tracks configuration and process-environment data into the first-stage POST using redacted values.",
     ),
     (
-        "04-ioc-extraction.html",
-        "Public IOC Extraction",
-        "Extracts and organizes already-public indicators of compromise from the evidence set.",
+        "04-stage-two-static-feature-analysis.html",
+        "Stage-Two Static Feature Analysis",
+        "Derives host-profiling, beaconing, polling, and tasking features without publishing the hostile body.",
     ),
     (
-        "05-behavior-map.html",
-        "Behavior and Evidence Map",
-        "Maps observed and inferred behavior while preserving capability, execution, and transmission boundaries.",
+        "05-beacon-and-network-path-analysis.html",
+        "Beacon and Network Path Analysis",
+        "Models fake beacon fields and explains the undici, TCP, route, blackhole, and ENETUNREACH path.",
+    ),
+    (
+        "06-ioc-and-artifact-derivation.html",
+        "IOC and Artifact Derivation",
+        "Normalizes the public indicators and shows how defensive CSV/JSON outputs are derived safely.",
+    ),
+    (
+        "07-evidence-boundary-and-claim-classification.html",
+        "Evidence Boundary and Claim Classification",
+        "Builds a claim matrix separating proven, observed, likely, plausible, and unsupported conclusions.",
     ),
 ]
 
@@ -62,34 +72,34 @@ def main() -> int:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Defensive Analysis Notebooks</title>
+  <title>Rendered Analysis Notebooks</title>
   <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body>
   <main class="page">
     <article class="article">
       <h1>Rendered Analysis Notebooks</h1>
-      <p>These notebooks are static HTML exports from the defensive MetaPlay
-      incident analysis lab. They document controlled inspection steps, parsing
-      logic, hashes, IOC extraction, behavior mapping, and evidence-bound
-      reasoning.</p>
+      <p>These notebooks are the technical appendix to the incident report.
+      They walk through the exploit mechanics, code path, data flow, stage-two
+      behavior, IOC derivation, network failure, and evidence boundaries.</p>
       <p>They are not live notebooks. They do not execute attacker-provided code
-      in the browser. They are provided so readers can dig deeper into the
-      technical nuance behind the incident report.</p>
+      in the browser. They use sanitized excerpts, fake data, public indicators,
+      and derived summaries so readers can inspect the reasoning safely.</p>
       <nav class="top-nav">
         <a href="../../">Article</a>
         <a href="../../NOTEBOOKS.html">Notebook Guide</a>
       </nav>
       <h2>Suggested Reading Order</h2>
-      <p>Start with the two runtime healthchecks, continue through lifecycle and
-      staged-loader analysis, then finish with IOC extraction and the behavior
-      map.</p>
+      <p>Read in order. The sequence moves from trust boundaries to entrypoint,
+      import graph, data flow, stage features, network behavior, IOC derivation,
+      and final claim classification.</p>
       <ol>
         {items}
       </ol>
       <h2>Safety Boundary</h2>
-      <p>The collection uses fake fixtures or indicators already published in
-      the report. Raw executable payloads, raw environment captures, and private
+      <p>The collection uses reviewed sanitized excerpts, fake fixtures,
+      derived feature summaries, and indicators already published in the
+      report. Raw executable payloads, raw environment captures, and private
       credential findings are intentionally withheld.</p>
     </article>
   </main>
