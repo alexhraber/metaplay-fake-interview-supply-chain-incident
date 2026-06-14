@@ -4,6 +4,18 @@
 
 The victim did run root `npm i` during the live interview, triggering the malicious lifecycle path. During the later controlled analysis, no attacker-provided project code or fetched payload was executed.
 
+## Defensive Learning Notebooks
+
+The repository also contains a reviewed, reproducible notebook set for safe
+static analysis and evidence reasoning:
+
+- [Notebook guide](NOTEBOOKS.md)
+- [Jupyter/NixOS setup](JUPYTER_SETUP.md)
+- [Rendered static notebooks](docs/notebooks/index.html)
+
+The notebooks use fake fixtures or already-public indicators. They do not
+include or execute the captured second-stage payload.
+
 ## Safe Publication Checklist
 
 Before publishing:

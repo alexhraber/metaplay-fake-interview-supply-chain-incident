@@ -36,3 +36,25 @@ Before publishing, verify:
 - No credential audit reports are included.
 - Attribution remains evidence-bound.
 - The reconstructed `nohup.out` evidence is clearly labeled as reconstructed.
+
+## Notebook Publication
+
+Public notebook sources live in `notebooks/`. Before rendering:
+
+```bash
+uv sync
+python scripts/build-public-notebooks.py
+bash scripts/check-public-safety.sh
+bash scripts/render-notebooks.sh
+```
+
+Rendered HTML is written to `docs/notebooks/`, which is linked from the existing
+Pages article. GitHub Pages serves these as static HTML; it does not execute a
+Jupyter kernel in the browser.
+
+Once `uv.lock` has been generated during an intentional dependency sync, use
+`uv sync --frozen` for publication rebuilds.
+
+Only reviewed public notebooks are rendered. `notebooks/private/`, raw payloads,
+raw environment captures, credential reports, and local scratch output are
+excluded.

@@ -1,0 +1,12 @@
+{
+  "name": "defensive-training-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "preinstall": "echo training-preinstall-as-data",
+    "prepare": "start /b node server || nohup node server &",
+    "test": "echo harmless-test"
+  },
+  "fixture_notice": "Commands are inert JSON strings for static analysis only."
+}
+

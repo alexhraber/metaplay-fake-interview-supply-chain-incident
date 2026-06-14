@@ -26,6 +26,7 @@ The victim did run root `npm i` during the live interview, triggering the malici
   <a href="./IOCs.html">IOCs</a>
   <a href="./NOHUP_RUNTIME_EVIDENCE.html">Runtime Evidence</a>
   <a href="./ARTIFACTS.html">Artifacts</a>
+  <a href="./docs/notebooks/">Notebooks</a>
 </nav>
 
 ## Related Files
@@ -35,6 +36,12 @@ The victim did run root `npm i` during the live interview, triggering the malici
 - [Reconstructed nohup runtime evidence](./NOHUP_RUNTIME_EVIDENCE.md)
 - [Artifact handling notes](./ARTIFACTS.md)
 - [Supporting screenshots](./screenshots/index.md)
+- [Static defensive analysis notebooks](./docs/notebooks/)
+- [Local Jupyter setup](./JUPYTER_SETUP.md)
+
+The rendered notebooks are static analysis artifacts. They document controlled
+inspection steps, parsing logic, hashes, and defensive reasoning. They do not
+execute attacker-provided code in the browser.
 
 ## Safe Publication Checklist
 
@@ -449,6 +456,19 @@ A reconstructed `nohup.out` excerpt is provided in [`NOHUP_RUNTIME_EVIDENCE.md`]
 - Never run interview code on a daily-use host containing wallets, cloud profiles, SSH agents, browser sessions, or developer CLI authentication.
 - Detect Node processes spawned from npm lifecycle parents that detach, survive installation, or contact newly observed domains/direct IPs.
 - Preserve packet capture, DNS/proxy logs, process ancestry, command lines, and file-access telemetry early. Those artifacts are needed to distinguish capability from successful exfiltration.
+
+## Explore the Analysis Notebooks
+
+These rendered notebooks provide a deeper walkthrough of the analysis process
+behind this report. They are static HTML exports, not live notebooks. They do
+not execute attacker-provided code in the browser.
+
+The collection is intended to help security researchers, developers, defenders,
+and curious readers explore the mechanics of the incident safely: npm lifecycle
+execution, staged JavaScript loading, IOC extraction, behavior mapping, and
+evidence-bound reasoning.
+
+[Explore the rendered analysis notebooks](./docs/notebooks/)
 
 ## 13. Final Judgment
 

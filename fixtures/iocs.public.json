@@ -1,0 +1,11 @@
+{
+  "purpose": "Indicators already published in IOCs.md",
+  "infrastructure_caveat": "Provider IPs may be shared or ephemeral.",
+  "indicators": [
+    {"type": "url", "value": "https://gamboracle.vercel.app/api", "context": "first-stage endpoint"},
+    {"type": "url", "value": "https://ipcheck-six.vercel.app/api", "context": "alternate endpoint"},
+    {"type": "url", "value": "http://136.243.22.62:1224/api/checkStatus", "context": "second-stage endpoint"},
+    {"type": "sha256", "value": "bdc6b8a1c098ce32683d496e10c769cffe52ecd3a0c47b563b36849ca37bed7d", "context": "withheld captured artifact"}
+  ]
+}
+

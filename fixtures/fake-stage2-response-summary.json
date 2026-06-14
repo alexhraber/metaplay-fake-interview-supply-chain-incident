@@ -1,0 +1,13 @@
+{
+  "artifact_type": "non-executable behavioral summary",
+  "source_payload_included": false,
+  "executable": false,
+  "behaviors": [
+    "collects fake host profile fields",
+    "copies fake process information",
+    "builds a fake query string",
+    "polls a command endpoint",
+    "remote evaluation capability existed in the incident and is omitted here"
+  ]
+}
+

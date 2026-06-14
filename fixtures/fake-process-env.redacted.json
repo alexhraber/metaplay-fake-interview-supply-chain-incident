@@ -1,0 +1,11 @@
+{
+  "NODE_ENV": "development",
+  "ALCHEMY_API_KEY": "redacted-demo-value",
+  "AWS_ACCESS_KEY_ID": "redacted-demo-value",
+  "AWS_SECRET_ACCESS_KEY": "redacted-demo-value",
+  "AUTH_API": "redacted-demo-value",
+  "HOME": "/home/example",
+  "PATH": "/usr/bin:/bin",
+  "npm_lifecycle_event": "prepare"
+}
+

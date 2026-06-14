@@ -1,0 +1,16 @@
+{
+  "runtime_error": "TypeError: fetch failed",
+  "execution_context": {
+    "source": "downloaded stage-two JavaScript",
+    "executor": "dynamic response execution",
+    "originating_file": "socket/index.js",
+    "originating_location": "documented in the public report"
+  },
+  "network_error": {
+    "code": "ENETUNREACH",
+    "syscall": "connect",
+    "destination": "public IOC documented separately"
+  },
+  "assessment": "The stage-two path ran; the observed direct-IP connection did not complete."
+}
+
