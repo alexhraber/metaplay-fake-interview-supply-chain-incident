@@ -23,6 +23,7 @@ The victim did run root `npm i` during the live interview, triggering the malici
 <nav class="top-nav">
   <a href="./">Article</a>
   <a href="./INCIDENT_THREAT_SURFACE.html">Full Report</a>
+  <a href="./docs/notebooks/">Static Defensive Analysis Notebooks</a>
   <a href="./IOCs.html">IOCs</a>
   <a href="./NOHUP_RUNTIME_EVIDENCE.html">Runtime Evidence</a>
   <a href="./ARTIFACTS.html">Artifacts</a>
@@ -32,11 +33,11 @@ The victim did run root `npm i` during the live interview, triggering the malici
 ## Related Files
 
 - [Full incident report](./INCIDENT_THREAT_SURFACE.md)
+- [Static defensive analysis notebooks](./docs/notebooks/)
 - [IOCs](./IOCs.md)
+- [Supporting screenshots](./screenshots/index.md)
 - [Reconstructed nohup runtime evidence](./NOHUP_RUNTIME_EVIDENCE.md)
 - [Artifact handling notes](./ARTIFACTS.md)
-- [Supporting screenshots](./screenshots/index.md)
-- [Static defensive analysis notebooks](./docs/notebooks/)
 - [Local Jupyter setup](./JUPYTER_SETUP.md)
 
 The rendered notebooks are static analysis artifacts. They document controlled
