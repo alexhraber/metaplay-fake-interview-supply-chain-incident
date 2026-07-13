@@ -1,5 +1,7 @@
 # MetaPlay Supply-Chain Incident: Threat Surface and Exposure Assessment
 
+[![🦀 Decapod](https://img.shields.io/badge/🦀%20Decapod-v0.66.3-dc2626)](https://github.com/DecapodLabs/decapod)
+
 > **Defensive disclosure note:** This write-up is published for defensive awareness and incident-response education. It documents a malicious fake-interview repository, npm lifecycle execution path, staged JavaScript behavior, observed IOCs, containment actions, and evidence boundaries. It intentionally avoids publishing live secrets or executable attacker payloads. Attribution is not asserted beyond the evidence described.
 
 The victim did run root `npm i` during the live interview, triggering the malicious lifecycle path. During the later controlled analysis, no attacker-provided project code or fetched payload was executed.
