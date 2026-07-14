@@ -44,7 +44,7 @@ These files are the project-local contract for humans and agents.
 <!-- decapod:codebase-attestation:start -->
 ## Codebase Attestation
 
-- Repository signal fingerprint: `ee39ada68314565a107848c07e00271bd4b2877e159ae06ab60272fadb70c221`
-- Significant implementation surfaces: `.github/` (1 files), `Makefile/` (1 files), `README.md/` (1 files), `analysis/` (1 files), `artifacts/` (1 files), `fixtures/` (1 files), `pyproject.toml/` (1 files), `tools/` (1 files)
+- Repository signal fingerprint: `d4521092ebfa684b1baab4b1a1838b3c04e2669ba94b8b3b9e18c48055bcae8a`
+- Significant implementation surfaces: `.github/` (1 files), `Makefile/` (1 files), `README.md/` (1 files), `analysis/` (1 files), `artifacts/` (1 files), `fixtures/` (1 files), `mentora-automa/` (4 files), `pyproject.toml/` (1 files), `tools/` (1 files)
 - Refreshed from the current codebase by `decapod specs.refresh`
 <!-- decapod:codebase-attestation:end -->

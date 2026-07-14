@@ -170,7 +170,7 @@ Because downloaded code executed with `require`, it had the user's normal filesy
 
 - GitHub CLI: `~/.config/gh/hosts.yml`
 - OpenCode: `~/.local/share/opencode/auth.json` and `~/.config/opencode/opencode.jsonc`
-- Codex CLI: `~/.codex/`, including local authentication state where present
+- Codex CLI (local authentication state where present)
 - Claude: `~/.claude/.credentials.json` and related local state
 - npm: `~/.npmrc`
 - SSH: `~/.ssh/id_ed25519`, other private keys, agents, and configuration
