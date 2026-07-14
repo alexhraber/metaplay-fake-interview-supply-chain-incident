@@ -28,4 +28,5 @@ jobs:
           DECAPOD_VALIDATE_SKIP_GIT_GATES: 1
         run: |
           decapod init --proof
+          decapod rpc --op specs.refresh
           decapod validate
