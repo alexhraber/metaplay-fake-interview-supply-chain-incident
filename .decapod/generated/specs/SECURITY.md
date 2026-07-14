@@ -100,3 +100,11 @@ Describe the security primitives and security controls implemented in this repos
 - **Least Privilege**: Ensure minimal access permissions for all subsystems and roles.
 - **Input Validation**: Strictly validate all inputs at trust boundaries.
 - **Secure Storage**: Encrypt sensitive data at rest and in transit.
+
+<!-- decapod:codebase-attestation:start -->
+## Codebase Attestation
+
+- Repository signal fingerprint: `ee39ada68314565a107848c07e00271bd4b2877e159ae06ab60272fadb70c221`
+- Significant implementation surfaces: `.github/` (1 files), `Makefile/` (1 files), `README.md/` (1 files), `analysis/` (1 files), `artifacts/` (1 files), `fixtures/` (1 files), `pyproject.toml/` (1 files), `tools/` (1 files)
+- Refreshed from the current codebase by `decapod specs.refresh`
+<!-- decapod:codebase-attestation:end -->
